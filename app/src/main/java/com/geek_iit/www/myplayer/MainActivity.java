@@ -15,46 +15,60 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
 
-    ListView lv;
-    String [] items;
+    //this our songs list
+    public ListView Lv;
+    //this is an array of string that contains each songs in our phone
+    public String [] Items;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //This is my list view instance
-        lv=(ListView)findViewById(R.id.lvPlayList);
-        //this is a array list to  put mysongs in
-        ArrayList<File> mysongs=findSongs(Environment.getExternalStorageDirectory());
-        items = new String [ mysongs.size() ];
-
-        for (int i=0;i<mysongs.size();i++)
+        Lv =(ListView)findViewById(R.id.lvPlayList);
+        //this is a array list to  put all the files on my phone that cantains the extention .mp3
+        //or .wave in arraylist Mysongs
+        ArrayList<File> MySongs=FindSongs(Environment.getExternalStorageDirectory());
+        //fixe the size of the tabale itemes base on the size of MySong to create the items list
+        Items = new String [ MySongs.size() ];
+        //Now cover all the array list and put each element in the Items tabale and toast the name
+        //of each songs
+        for (int i=0;i<MySongs.size();i++)
         {
-            toast(mysongs.get(i).getName().toString());
-            items[i]=mysongs.get(i).getName().toString();
+            //toast the name of the song i's like a alert
+            toast(MySongs.get(i).getName().toString());
+            //put the name of the songs in the items tabale
+            Items[i]=MySongs.get(i).getName().toString();
         }
-        ArrayAdapter<String> adp =new ArrayAdapter<String>(getApplicationContext(),
-                android.R.layout.simple_list_item_1,items);
-        lv.setAdapter(adp);
+        //this is to controle the data how to display in our case the date is a Tabale of string
+        ArrayAdapter<String> Adapter = new ArrayAdapter<String>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, Items);
+        //set our adapter to the listview
+        Lv.setAdapter(Adapter);
 
     }
    //this how i'm gonna prepare my list of songs
-    public ArrayList<File> findSongs(File root){
-        ArrayList<File> al =new ArrayList<File>();
-        File [] files=root.listFiles();
-        for (File singleFile:files){
+    public ArrayList<File> FindSongs(File root){
+        //Al is arraylist contains sonfs that we find on our phone
+        ArrayList<File> Al =new ArrayList<File>();
+        //Tabale files contains all file scan in our directory
+        File [] Files =root.listFiles();
+        //cover the files and test if the file is a directory and not a hidden file we recall our
+        // function else we add the file to array-list Al
+        for (File singleFile: Files){
           if (singleFile.isDirectory()&& !singleFile.isHidden()){
-              al.addAll(findSongs(singleFile));
-
+              Al.addAll(FindSongs(singleFile));
           }
           else{
               if(singleFile.getName().endsWith(".mp3")||singleFile.getName().endsWith(".wav")){
-                  al.add(singleFile);
+                  Al.add(singleFile);
               }
           }
         }
-        return  al;
+        //return the list of the file songs that we find
+        return Al;
     }
 
+    //Methode allow as to show a toast like alert
     public void toast(String text){
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
     }
